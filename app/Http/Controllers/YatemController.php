@@ -361,12 +361,12 @@ class YatemController extends Controller
         parent::$data['HouseType'] = HouseType::where('status', 1)->get();
         parent::$data['ProjectSponser'] = ProjectSponser::where('status', 1)->get();
         parent::$data['HouseMaterial'] = HouseMaterial::where('status', 1)->get();
-        parent::$data['HouseGeneralCondition'] = HouseGeneralCondition::where('status', 1)->get();
+        parent::$data['HouseGeneralCondition'] = HouseGeneralCondition::get();
         parent::$data['HouseWallMaterial'] = HouseWallMaterial::where('status', 1)->get();
         parent::$data['HouseShower'] = HouseShower::where('status', 1)->get();
         parent::$data['FoodGaz'] = FoodGaz::where('status', 1)->get();
         parent::$data['HouseRoom'] = HouseRoom::where('status', 1)->get();
-        parent::$data['Furnitures'] = Furniture::where('status', 1)->get();
+        parent::$data['Furnitures'] = Furniture::where(['status' => 1,'orphan_status'=> 1])->get();
         parent::$data['UserOpinion'] = UserOpinion::where('status', 1)->get();
         parent::$data['Citizens'] = Citizen::where('status', 1)->get();
         parent::$data['Types'] = CustomerType::where('status', 2)->get();
@@ -394,6 +394,7 @@ class YatemController extends Controller
         parent::$data['Regions'] = Region::all();
         parent::$data['RegionTypes'] = RegionType::all();
         parent::$data['MainReasons'] = main_reason::all();
+        parent::$data['HouseGeneralCondition'] = HouseGeneralCondition::get();
         parent::$data['HelpTypes'] = HelpType::all();
         parent::$data['Educations'] = Education::where('status', 1)->get();
         parent::$data['Works'] = Work::where('status', 1)->get();
@@ -406,7 +407,7 @@ class YatemController extends Controller
         parent::$data['HouseShower'] = HouseShower::where('status', 1)->get();
         parent::$data['FoodGaz'] = FoodGaz::where('status', 1)->get();
         parent::$data['HouseRoom'] = HouseRoom::where('status', 1)->get();
-        parent::$data['Furnitures'] = Furniture::where('status', 1)->get();
+        parent::$data['Furnitures'] = Furniture::where(['status' => 1,'orphan_status'=> 1])->get();
         parent::$data['UserOpinion'] = UserOpinion::where('status', 1)->get();
         parent::$data['Citizens'] = Citizen::where('status', 1)->get();
         parent::$data['Types'] = CustomerType::where('status', 2)->get();
@@ -445,8 +446,9 @@ class YatemController extends Controller
         parent::$data['HouseShower'] = HouseShower::where('status', 1)->get();
         parent::$data['FoodGaz'] = FoodGaz::where('status', 1)->get();
         parent::$data['HouseRoom'] = HouseRoom::where('status', 1)->get();
-        parent::$data['Furnitures'] = Furniture::where('status', 1)->get();
+        parent::$data['Furnitures'] = Furniture::where(['status' => 1,'orphan_status'=> 1])->get();
         parent::$data['UserOpinion'] = UserOpinion::where('status', 1)->get();
+        parent::$data['HouseGeneralCondition'] = HouseGeneralCondition::get();
         parent::$data['Citizens'] = Citizen::where('status', 1)->get();
         parent::$data['Types'] = CustomerType::where('status', 2)->get();
         parent::$data['Jenders'] = Jender::all();
@@ -874,20 +876,14 @@ class YatemController extends Controller
             'child_dob' => 'nullable|array',
             'child_dob.*' => 'nullable|date_format:Y',
             'child_jender' => 'nullable|array',
-            'child_card_no.*' => 'nullable|integer',
-            'child_card_no' => 'nullable|array',
             'child_relation' => 'nullable|array',
             'child_qualification' => 'nullable|array',
             'child_social' => 'nullable|array',
             'child_health' => 'nullable|array',
             'child_job' => 'nullable|array',
-            'child_salary' => 'nullable|array',
-            'child_salary.*' => 'nullable|integer',
 
         ], [
             'child_dob.*.date_format' => 'يجب ان يكون سنة الميلاد صحيحا',
-            'child_card_no.*.integer' => 'يجب ان يكون رقم الهوية رقما صحيحا',
-            'child_salary.*.integer' => 'يجب ان يكون الراتب رقما صحيحا',
         ]);
 
         $data = $request->only('house_owner', 'house_type', 'house_material');
@@ -913,12 +909,16 @@ class YatemController extends Controller
                     'dob' => Carbon::createFromFormat('Y', $request->child_dob[$key]) ?? '',
                     'jender_id' => $request->child_jender[$key] ?? '',
                     'relation' => $request->child_relation[$key] ?? '',
-                    'health_id' => $request->child_health[$key] ?? '',
-                    'qualification_id' => $request->child_qualification[$key] ?? '',
-                    'social_id' => $request->child_social[$key] ?? '',
                     'job' => $request->child_job[$key] ?? '',
-                    'salary' => $request->child_salary[$key] ?? '',
-                    'is_yatem' => 0,
+                    'social_id' => $request->child_social[$key] ?? '',
+                    'qualification_id' => $request->child_qualification[$key] ?? '',
+                    'school_type' => $request->child_school_type[$key] ?? '',
+                    'health_id' => $request->child_health[$key] ?? '',
+                    'guarantee' => $request->child_guarantee[$key] ?? '',
+                    'guarantee_source' => $request->child_guarantee_source[$key] ?? '',
+                    'guarantee_value' => $request->child_guarantee_value[$key] ?? '',
+                    'need' => $request->child_need[$key] ?? '',
+                    'is_yatem' => 1,
                     'user_id' => auth()->id()
                 ];
             }

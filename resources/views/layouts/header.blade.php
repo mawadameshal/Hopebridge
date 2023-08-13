@@ -37,9 +37,10 @@
                                         class="feather feather-settings color-content"></i></a>
                         </header>
                         <ul class="card-body list-unstyled dropdown-list-group">
+
                             @foreach(\App\Models\Activity::with('admin')->latest()->limit(5)->get() as $activity)
                                 <li>
-                                    <a href="#" class="">{{$activity->admin->name}}<br> {{$activity->details}} <br>{{$activity->created_at}}</a>
+                                    <a href="{{$activity->url}}" class="">{{$activity->admin->name}}<br> {{$activity->details}} <br>{{$activity->created_at}}</a>
                                 </li>
                             @endforeach
                         </ul>

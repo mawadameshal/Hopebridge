@@ -59,6 +59,25 @@
         </div>
         <hr class="col-12">
         <div class="col-md-12">
+            <div class="form-group row">
+                <label class="text-left col-md-2">الحالة العامة للسكن</label>
+                <div class="col-md-10">
+                    <div class="row">
+                        @foreach($HouseGeneralCondition as $condition)
+                            <div class="col-md-2">
+                                <input type="radio" {{$condition->id==$orphan->house_material?"checked":""}}
+                                name="house_general_condition" id="house_general_condition-{{$condition->id}}"
+                                       value="{{$condition->id}}">
+                                <label
+                                        for="house_general_condition-{{$condition->id}}">{{$condition->name}}</label>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr class="col-12">
+        <div class="col-md-12">
             <h3 class="text-muted">
                 هل يتوفر التالي
             </h3>

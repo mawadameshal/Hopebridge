@@ -152,7 +152,8 @@
                                     <li class="col"><a href="#tab4" data-toggle="tab">معلومات عن الوصي</a></li>
                                     <li class="col"><a href="#tab5" data-toggle="tab">التركيب الاسري</a></li>
                                     <li class="col"><a href="#tab6" data-toggle="tab">الوضع التعليمي للأسرة</a></li>
-                                    <li class="col"><a href="#tab7" data-toggle="tab">الحالة الصحية والنفسية للطفل</a></li>
+                                    <li class="col"><a href="#tab7" data-toggle="tab">الحالة الصحية والنفسية للطفل</a>
+                                    </li>
                                     <li class="col"><a href="#tab8" data-toggle="tab">الوضع الاقتصادي للأسرة</a></li>
                                     <li class="col"><a href="#tab9" data-toggle="tab">معلومات عن السكن</a></li>
                                     <li class="col"><a href="#tab10" data-toggle="tab">رأي الباحث الاجتماعي</a></li>
@@ -212,7 +213,6 @@
                         <div class="tab-pane" id="tab13">
                             @include('yatem.tabs.attachments')
                         </div>
-
 
 
                         <div class="tab-pane" id="tab14">
@@ -455,13 +455,13 @@
 
         $('.select2').select2();
 
-        $("input[type=number]").on("focus", function() {
-            $(this).on("keydown", function(event) {
+        $("input[type=number]").on("focus", function () {
+            $(this).on("keydown", function (event) {
                 if (event.keyCode === 38 || event.keyCode === 40) {
                     event.preventDefault();
                 }
             });
-            $(this).on("mousewheel", function(event) {
+            $(this).on("mousewheel", function (event) {
                 this.blur()
             });
         });
@@ -505,7 +505,7 @@
                             ajax($('#information_of_orphan'))
                         }
                         return false;
-                    }else if (index == 3) {
+                    } else if (index == 3) {
                         fatherInfo.form();
                         if (fatherInfo.valid()) {
                             ajax($('#father-info'))
@@ -535,37 +535,37 @@
                             ajax($('#child-psychological-health-condition'))
                         }
                         return false;
-                    }else if (index == 8) {
+                    } else if (index == 8) {
                         workInfo.form();
                         if (workInfo.valid()) {
                             ajax($('#work-info'))
                         }
                         return false;
-                    }else if (index == 9) {
+                    } else if (index == 9) {
                         housingData.form();
                         if (housingData.valid()) {
                             ajax($('#housing-data'))
                         }
                         return false;
-                    }else if (index == 10) {
+                    } else if (index == 10) {
                         researcher.form();
                         if (researcher.valid()) {
                             ajax($('#researcher'))
                         }
                         return false;
-                    }else if (index == 11) {
+                    } else if (index == 11) {
                         familyCompositionDetails.form();
                         if (familyCompositionDetails.valid()) {
                             ajax($('#familyCompositionDetails'))
                         }
                         return false;
-                    }else if (index == 12) {
+                    } else if (index == 12) {
                         guarantees.form();
                         if (guarantees.valid()) {
                             ajax($('#guaranteesForm'))
                         }
                         return false;
-                    }else if (index == 13) {
+                    } else if (index == 13) {
                         attachments.form();
                         if (attachments.valid()) {
                             $('#attachments').submit();
@@ -612,11 +612,11 @@
             });
 
             @if(isset($stage))
-            wizard.bootstrapWizard('show',{{intval($stage)}});
+            wizard.bootstrapWizard('show', {{intval($stage)}});
 
             @endif
             @if(isset($stage2))
-            wizard.bootstrapWizard('show',{{intval($stage2)}});
+            wizard.bootstrapWizard('show', {{intval($stage2)}});
 
             @endif
         });
@@ -635,7 +635,7 @@
             }).done(function (data) {
                 if (data.status == 'success') {
                     toastr.success(data.msg);
-                    ajaxFinish=true;
+                    ajaxFinish = true;
                     wizard.bootstrapWizard('next');
                     if (data.file_no)
                         $('#file_no').text(data.file_no);
@@ -701,7 +701,7 @@
             let income_source = $('#income_source').val();
             let income_amount = $('#income_amount').val();
             let income_side = $('#income_side').val();
-            if (!(income_source  && income_amount && income_side)) {
+            if (!(income_source && income_amount && income_side)) {
                 toastr.error('تأكد من ادخال الحقول');
 
                 return false;
@@ -732,7 +732,7 @@
                 return false;
             }
 
-           var m = $('#child_guaranteed_list_Table tr').length - 1;
+            var m = $('#child_guaranteed_list_Table tr').length - 1;
 
             let html = `<tr>
                                             <td>` + m + `</td>
@@ -839,25 +839,25 @@
             let child_dob = $('#child_dob').val();
             let child_jender = $('#child_jender').val();
             let child_jender_text = $('#child_jender option:checked').text();
-            let child_card_no = $('#child_card_no').val();
             let child_relation = $('#child_relation').val();
             let child_relation_text = $('#child_relation option:checked').text();
-
-            let child_qualification = $('#child_qualification').val();
-            let child_qualification_text = $('#child_qualification option:checked').text();
-
+            let child_job = $('#child_job').val();
             let child_social = $('#child_social').val();
             let child_social_text = $('#child_social option:checked').text();
-
+            let child_qualification = $('#child_qualification').val();
+            let child_qualification_text = $('#child_qualification option:checked').text();
+            let child_school_type = $('#child_school_type').val();
             let child_health = $('#child_health').val();
             let child_health_text = $('#child_health option:checked').text();
+            let child_guarantee = $('#child_guarantee').val();
+            let child_guarantee_text = $('#child_guarantee option:checked').text();
+            let child_guarantee_source = $('#child_guarantee_source').val();
+            let child_guarantee_value = $('#child_guarantee_value').val();
+            let child_need = $('#child_need').val();
 
-            let child_job = $('#child_job').val();
-            let child_salary = $('#child_salary').val();
 
-
-            if (!(child_name && child_dob && child_jender && child_card_no && child_card_no
-                && child_relation && child_qualification && child_social && child_health
+            if (!(child_name && child_dob && child_jender && child_relation && child_qualification
+                && child_social && child_health
             )) {
                 toastr.error('تأكد من ادخال الحقول');
 
@@ -865,34 +865,40 @@
             }
 
             let html = `<tr>
-                                            <td>#</td>
-                                            <td><input type="text" name="child_name[]" readonly value="` + child_name + `"  class="form-control" ></td>
-                                            <td><input type="text" name="child_dob[]" readonly value="` + child_dob + `"  class="form-control" ></td>
-                                            <td>
-                                                <input type="hidden" name="child_jender[]" readonly value="` + child_jender + `"   class="form-control income_amount" >
-                                                <input type="tet" readonly value="` + child_jender_text + `"   class="form-control income_amount" >
-                                            </td>
-                                            <td><input type="text" name="child_card_no[]" readonly value="` + child_card_no + `"  class="form-control" ></td>
-                                           <td>
-                                                <input type="hidden" name="child_relation[]" readonly value="` + child_relation + `"   class="form-control income_amount" >
-                                                <input type="tet" readonly value="` + child_relation_text + `"   class="form-control income_amount" >
-                                            </td>
-                                             <td>
-                                                <input type="hidden" name="child_qualification[]" readonly value="` + child_qualification + `"   class="form-control income_amount" >
-                                                <input type="tet" readonly value="` + child_qualification_text + `"   class="form-control income_amount" >
-                                             <td>
-                                                <input type="hidden" name="child_social[]" readonly value="` + child_social + `"   class="form-control income_amount" >
-                                                <input type="tet" readonly value="` + child_social_text + `"   class="form-control income_amount" >
-                                             <td>
-                                                <input type="hidden" name="child_health[]" readonly value="` + child_health + `"   class="form-control income_amount" >
-                                                <input type="tet" readonly value="` + child_health_text + `"   class="form-control income_amount" >
-
-                                            <td><input type="text" name="child_job[]" readonly value="` + child_job + `"  class="form-control" ></td>
-                                            <td><input type="text" name="child_salary[]" readonly value="` + child_salary + `"  class="form-control" ></td>
-                                            <td>
-                                                <a href="javascript:;" class="delete-child btn btn-danger btn-sm" ><i class="fa fa-times"></i></a>
-            </td>
-        </tr>`;
+    <td>#</td>
+    <td><input type="text" name="child_name[]" readonly value="${child_name}" class="form-control"></td>
+    <td><input type="text" name="child_dob[]" readonly value="${child_dob}" class="form-control"></td>
+    <td>
+        <input type="hidden" name="child_jender[]" readonly value="${child_jender}" class="form-control income_amount">
+        <input type="text" readonly value="${child_jender_text}" class="form-control income_amount">
+    </td>
+    <td>
+        <input type="hidden" name="child_relation[]" readonly value="${child_relation}" class="form-control income_amount">
+        <input type="text" readonly value="${child_relation_text}" class="form-control income_amount">
+    </td>
+    <td><input type="text" name="child_job[]" readonly value="${child_job}" class="form-control"></td>
+    <td>
+        <input type="hidden" name="child_social[]" readonly value="${child_social}" class="form-control income_amount">
+        <input type="text" readonly value="${child_social_text}" class="form-control income_amount">
+    </td>
+    <td>
+        <input type="hidden" name="child_qualification[]" readonly value="${child_qualification}" class="form-control income_amount">
+        <input type="text" readonly value="${child_qualification_text}" class="form-control income_amount">
+    </td>
+    <td><input type="text" name="child_school_type[]" readonly value="${child_school_type}" class="form-control"></td>
+    <td>
+        <input type="hidden" name="child_health[]" readonly value="${child_health}" class="form-control income_amount">
+        <input type="text" readonly value="${child_health_text}" class="form-control income_amount">
+    </td>
+    <td>
+        <input type="hidden" name="child_guarantee[]" readonly value="${child_guarantee}" class="form-control income_amount">
+        <input type="text" readonly value="${child_guarantee_text}" class="form-control income_amount">
+    </td>
+    <td><input type="text" name="child_guarantee_source[]" readonly value="${child_guarantee_source}" class="form-control"></td>
+    <td><input type="text" name="child_guarantee_value[]" readonly value="${child_guarantee_value}" class="form-control"></td>
+    <td><input type="text" name="child_need[]" readonly value="${child_need}" class="form-control"></td>
+    <td><a href="javascript:;" class="delete-child btn btn-danger btn-sm"><i class="fa fa-times"></i></a></td>
+</tr>`;
             $('#children').append(html);
             $('#no-data').hide();
             $('.family-form input').val('');
@@ -979,7 +985,7 @@
                     state: $("#state_id").val(),
                     _token: "{{csrf_token()}}"
                 },
-                success: function(response){
+                success: function (response) {
                     var data = JSON.parse(response);
                     $("#region_id").empty();
                     $("#region_id").append("<option>اختر المنطقة</option>");

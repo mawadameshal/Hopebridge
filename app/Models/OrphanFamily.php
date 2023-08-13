@@ -9,7 +9,9 @@ class OrphanFamily extends Model
 {
     use SoftDeletes;
     protected $table='orphan_families';
-    protected $fillable = [ 'name' ,'dob' ,'jender_id' ,'card_no' ,'relation' ,'qualification_id' ,'social_id' ,'health_id' ,'job' ,'salary' ,'user_id','is_yatem'];
+    protected $fillable = [ 'name' ,'dob' ,'jender_id' ,'card_no' ,'relation' ,'qualification_id'
+        ,'social_id' ,'health_id' ,'job' ,'salary' ,'user_id','is_yatem',
+        'need', 'school_type', 'academic_level', 'guarantee', 'guarantee_source', 'guarantee_value'];
 
     protected $dates = ['dob'];
     public function jender(){

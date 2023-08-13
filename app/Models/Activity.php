@@ -7,11 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 class Activity extends Model
 {
 
-    protected $fillable = ['admin_id', 'type', 'details', 'attr', 'from', 'to'];
+    protected $fillable = ['admin_id', 'type', 'details', 'attr', 'from', 'to','url'];
 
-    static function log($type, $details, $attr = '', $from = '', $to = '')
+    static function log($type, $details, $attr = '', $url = '' ,$from = '', $to = '')
     {
-        \App\Models\Activity::create(['admin_id' => auth()->id(), 'type' => $type, 'details' => $details, 'attr' => $attr, 'from' => $from, 'to' => $to]);
+        \App\Models\Activity::create(['admin_id' => auth()->id(), 'type' => $type, 'details' => $details, 'attr' => $attr,'url' => $url,
+            'from' => $from, 'to' => $to]);
     }
 
     function admin()

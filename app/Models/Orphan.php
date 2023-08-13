@@ -47,7 +47,9 @@ class Orphan extends Model
                 foreach ($changes as $attr => $value) {
                     $data .= $attr . ":{" . $product->getOriginal($attr) . '=>' . $product->$attr . "},";
                 }
-                Activity::log('orphan', " تمت تعديل بيانات اليتيم ({$product->name}) ", $data);
+                $url = "/Orphan/v1/{$product->id}/edit";
+
+                Activity::log('orphan', " تمت تعديل بيانات اليتيم ({$product->name}) ", $data,$url);
             }
 
         });

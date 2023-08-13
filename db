@@ -1,0 +1,5 @@
+ALTER TABLE `furniture` ADD `orphan_status` INT NULL DEFAULT NULL AFTER `status`;
+
+UPDATE `furniture` SET orphan_status = 1 WHERE id in (2,3,5,6,8,9,10,11,12,13);
+ALTER TABLE `activities` ADD `url` VARCHAR(1500) NULL DEFAULT NULL AFTER `to`;
+
