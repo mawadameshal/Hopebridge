@@ -1,14 +1,38 @@
 @extends('layouts.index')
 @section('content')
-<style>
+    <style>
+        @page {
+            direction: rtl;
+        }
+
         @media print {
+            @page {
+                size: A4 portrait;
+                margin: 20px;
+                direction: rtl;
+            }
+
+            .page-break {
+                display: block;
+                height: 1px;
+                page-break-before: always;
+            }
+
+            .page-break-no {
+                display: block;
+                height: 1px;
+                page-break-after: avoid;
+            }
+
             .printer table {
+                direction: ltr !important;
+                margin: 50px 100px;
                 counter-reset: rowNumber;
+                border-collapse: collapse; /* Add this line for better border rendering */
             }
 
             .printer tr {
                 counter-increment: rowNumber;
-
             }
 
             .printer tr td:nth-child(8)::before {
@@ -17,8 +41,36 @@
                 margin-right: 0.5em;
             }
 
-            tr.page-break { display: block; page-break-before: always; }
+            tr.page-break {
+                display: block;
+                page-break-before: always;
+            }
+
+            :not(table) {
+                direction: rtl;
+            }
+
+            table {
+                direction: ltr;
+            }
+
+            table th, tr, td {
+                border: 1px solid #000000;
+                padding: 8px; /* Add padding for better cell content spacing */
+            }
+
+            .printer table th,
+            .printer tr,
+            .printer td {
+                border: 1px solid #000000;
+                padding: 8px; /* Add padding for better cell content spacing */
+            }
+
+            .printer th {
+                background-color: #f2f2f2; /* Add a background color for table headers */
+            }
         }
+
     </style>
     <section class="content">
         <div class="portlet light bordered">
@@ -30,7 +82,6 @@
 
             </div>
             {!! Form::open(['method'=>'post','url'=> url($route) , 'id'=>'add_form','class'=>'form-horizontal form-row-seperated'])!!}
-
             <div class="portlet-body collapse-body form">
                 <div class="form-body" style="padding: 10px;">
                     <div class="row" style="position: relative">
@@ -125,21 +176,24 @@
                 </div>
             </div>
             <div class="portlet-body collapse-body form" style="background: #ffffff">
-                <table id="data_tb" class="printer">
-                    <thead>
-                   <tr>
-                        <th style="text-align: center;width: 25px;"><input type="checkbox" name="select_all" value="1" id="example-select-all"></th>
-                        <th align="center">الرقم</th>
-                        <th align="center">رقم الملف</th>
-                        <th align="center">رقم الكشف</th>
-                        <th align="center">الاسم</th>
-                        <th align="center"> الهوية</th>
-                        <th align="center">افراد</th>
-                        <th align="center"> الجوال</th>
-                        <th align="center" width="25%">توقيع المستلم</th>
-                    </tr>
-                    </thead>
-                </table>
+                <div class="printable">
+                    <table id="data_tb" class="printer">
+                        <thead>
+                        <tr>
+                            <th style="text-align: center;width: 25px;"><input type="checkbox" name="select_all"
+                                                                               value="1" id="example-select-all"></th>
+                            <th align="center">الرقم</th>
+                            <th align="center">رقم الملف</th>
+                            <th align="center">رقم الكشف</th>
+                            <th align="center">الاسم</th>
+                            <th align="center"> الهوية</th>
+                            <th align="center">افراد</th>
+                            <th align="center"> الجوال</th>
+                            <th align="center" width="25%">توقيع المستلم</th>
+                        </tr>
+                        </thead>
+                    </table>
+                </div>
 
                 <div class="form-actions" style="margin-top: 10px;">
                     <div class="portlet-title">
@@ -196,49 +250,6 @@
 
             <div id="proc_img_div" align="center"></div>
         </div>
-
-        <style>
-
-
-            @media print {
-                :not(table) {
-                    direction: rtl;
-                }
-
-                table {
-                    direction: ltr;
-                    border: 1px solid #000000 !important;
-                }
-
-
-                table th {
-                    border-right: 1px solid #000000;
-
-                }
-
-                table td {
-                    border-left: 1px solid #000000;
-                    background: red !important;
-
-                }
-
-
-                table td {
-                    border-top: 1px solid #000000;
-                }
-
-
-            }
-
-
-            @page {
-                margin: 60px;
-                margin-top: 20px;
-
-
-            }
-
-        </style>
     </section>
 
     <div class="modal" tabindex="-1" role="dialog" id="sendMessageModal">
@@ -335,7 +346,7 @@
                         url: url,
                         data: {
                             ids: ids,
-                            project_id:$('#project_id').val(),
+                            project_id: $('#project_id').val(),
                             _token: "{{csrf_token()}}"
                         },
                         success: function (response) {
@@ -354,14 +365,14 @@
 
                 bootbox.setLocale('ar');
 
-                $('#example-select-all').on('click', function(){
+                $('#example-select-all').on('click', function () {
                     // Get all rows with search applied
-                    var rows = oTable.rows({ 'search': 'applied' }).nodes();
+                    var rows = oTable.rows({'search': 'applied'}).nodes();
                     // Check/uncheck checkboxes for all rows in the table
                     $('input[type="checkbox"]', rows).prop('checked', this.checked);
                 });
 
-                function checkedselected(){
+                function checkedselected() {
                     var rowcollection = oTable.$(".call-checkbox:checked", {"page": "all"});
                     rowcollection.each(function (index, elem) {
                         console.log(elem);
@@ -373,12 +384,12 @@
                 }
 
                 // Handle click on checkbox to set state of "Select all" control
-                $('#example tbody').on('change', 'input[type="checkbox"]', function(){
+                $('#example tbody').on('change', 'input[type="checkbox"]', function () {
                     // If checkbox is not checked
-                    if(!this.checked){
+                    if (!this.checked) {
                         var el = $('#example-select-all').get(0);
                         // If "Select all" control is checked and has 'indeterminate' property
-                        if(el && el.checked && ('indeterminate' in el)){
+                        if (el && el.checked && ('indeterminate' in el)) {
                             // Set visual state of "Select all" control
                             // as 'indeterminate'
                             el.indeterminate = true;
@@ -453,19 +464,19 @@
                                 className: 'btn-info print_btn',
                                 text: 'طباعة',
                                 title: '',
-                                message: '<div style="line-height:25px;font-weight: bold;border:1px solid #000;margin-bottom: 20px ;padding-bottom: 20px"><div  style="width:70%;float:right;text-align:center;font-size: 17px;margin-right: 10px;margin-top: 5px">' +
+                                message: '<div style="line-height:25px;font-weight: bold;border:1px solid #000;margin-bottom: 20px ;padding-bottom: 20px"><div  style="float: right;text-align: center;font-size: 17px;margin-right: 10px;margin-top: 20px;">' +
                                     '<div>Hope Bridge Charitable Association <br>جمعية جسر الأمل الخيرية</div>' +
                                     '<div>بتمويل من ' + project_sponser + '</div>' +
                                     '<div style="margin-top: 5px">مشروع ' + project_name +
                                     '<br>' + title + '</div>' +
                                     '</div>' +
-                                    '<div class="col-md-6" style="width:20%;float:left;padding-left: 30px" >' +
-                                    '<img width="160px" style="margin-top: 30px;"  src="{{url("uploads/news/sub/". \App\Models\Setting::find(1)->img_name )}}">' +
+                                    '<div style="width: 30%;float:left; text-align: center; margin-right: 10px; margin-top: 20px;">' +
+                                    '<img width="160px" style=""  src="{{url("uploads/news/sub/". \App\Models\Setting::find(1)->img_name )}}">' +
                                     '</div><div style="clear: both;"></div></div>' +
                                     '<div style="text-align: center;margin-bottom: 10px">' +
                                     '<div>' +
-                                    '<div style="float: right;"><strong>المحافظة : </strong>' + state + '</div>' +
-                                    '<div style="float:left;"><strong>تاريخ التسليم : </strong>' + deliver_date + '</div>' +
+                                    '<div style="float: right;margin-right:30px;"><strong>المحافظة : </strong>' + state + '</div>' +
+                                    '<div style="float:left;margin-left:30px;"><strong>تاريخ التسليم : </strong>' + deliver_date + '</div>' +
                                     '</div>' +
                                     '<div style="clear:both;"></div>' +
                                     '</div>'
@@ -477,9 +488,9 @@
                                 },
                                 autoPrint: true,
                                 exportOptions: {
-                                     columns: [8 ,7 ,6 , 5, 4, 3, 2, 1],
+                                    columns: [8, 7, 6, 5, 4, 3, 2, 1],
 
-                                     modifier: {
+                                    modifier: {
                                         page: 'all'
                                     },
 
@@ -506,7 +517,7 @@
                                 'searchable': false,
                                 // 'visible':false,
                                 'render': function (id) {
-                                    return '<input type="checkbox" class="call-checkbox" checked="checked" name="id[]" value="'+id+'">'
+                                    return '<input type="checkbox" class="call-checkbox" checked="checked" name="id[]" value="' + id + '">'
 
                                 }
                             },
@@ -520,11 +531,12 @@
                             {'data': 'tag', 'name': 'tag', 'orderable': false,},
                             {'data': 'customer.name', 'name': 'customer_id', 'orderable': false,},
                             {'data': 'customer.card_no', 'name': 'customer_id', 'orderable': false,},
-                            {'data': 'customer', 'name': 'customer_id', 'orderable': false,
-                                "render": function(data, type, row) {
+                            {
+                                'data': 'customer', 'name': 'customer_id', 'orderable': false,
+                                "render": function (data, type, row) {
                                     if (data.family_count_total == null) {
-                                       return data.child_no
-                                    }else{
+                                        return data.child_no
+                                    } else {
                                         return data.family_count_total;
                                     }
                                 }
