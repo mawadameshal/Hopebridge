@@ -2247,7 +2247,8 @@ class CustomerController extends Controller
             return response(["status" => false, "message" => "يجب اختيار المشروع", 401]);
         }
         // print_r($request->get('ids'));exit();
-        CustomerProject::where('project_id',$proj_id)->whereNotIn('customer_id',$request->get('ids'))->delete();
+        if ($request->get('ids'))
+            CustomerProject::where('project_id',$proj_id)->whereIn('customer_id',$request->get('ids'))->delete();
 
         return response(["status" => true, "message" => "تمت العملية بنجاح", 200]);
     }

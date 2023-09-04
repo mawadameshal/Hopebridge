@@ -184,7 +184,7 @@
                                                                                value="1" id="example-select-all"></th>
                             <th align="center">الرقم</th>
                             <th align="center">رقم الملف</th>
-                            <th align="center">رقم الكشف</th>
+                            <th align="center" style="width: 5%">رقم الكشف</th>
                             <th align="center">الاسم</th>
                             <th align="center"> الهوية</th>
                             <th align="center">افراد</th>
@@ -338,8 +338,6 @@
 
                 $('body').on('click', '#deleteButton', function (e) {
 
-                    console.log(ids);
-
                     var url = "{{url('Customer/delete_customers_from_project')}}";
                     $.ajax({
                         type: "POST",
@@ -353,6 +351,7 @@
                             console.log(response);
                             toastr.success(response.message);
                             $('#deleteModal').modal('hide');
+                            location.reload();
                         }
                     });
                 });
@@ -464,13 +463,13 @@
                                 className: 'btn-info print_btn',
                                 text: 'طباعة',
                                 title: '',
-                                message: '<div style="line-height:25px;font-weight: bold;border:1px solid #000;margin-bottom: 20px ;padding-bottom: 20px"><div  style="float: right;text-align: center;font-size: 17px;margin-right: 10px;margin-top: 20px;">' +
+                                message: '<div style="line-height:25px;font-weight: bold;border:1px solid #000;margin-bottom: 20px ;padding-bottom: 20px"> <div style="text-align: center;font-size: 17px;margin-right: 10px;margin-top: 20px;float: right; width: 70%;">' +
                                     '<div>Hope Bridge Charitable Association <br>جمعية جسر الأمل الخيرية</div>' +
                                     '<div>بتمويل من ' + project_sponser + '</div>' +
                                     '<div style="margin-top: 5px">مشروع ' + project_name +
                                     '<br>' + title + '</div>' +
                                     '</div>' +
-                                    '<div style="width: 30%;float:left; text-align: center; margin-right: 10px; margin-top: 20px;">' +
+                                    '<div style="width: 30%;float:left;margin-top: 20px;text-align: center;margin-right: -10px;">' +
                                     '<img width="160px" style=""  src="{{url("uploads/news/sub/". \App\Models\Setting::find(1)->img_name )}}">' +
                                     '</div><div style="clear: both;"></div></div>' +
                                     '<div style="text-align: center;margin-bottom: 10px">' +
