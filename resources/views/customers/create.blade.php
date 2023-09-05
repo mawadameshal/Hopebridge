@@ -863,8 +863,8 @@
 
             $('#total_outcome').text(total_outcome + ' شيكل');
             $('#total_outcome').data('outcome',total_outcome);
-            // let total = total_income - total_outcome;
-            let total = $('#total_income_2').data('income') -  $('#total_outcome').data('outcome');
+            let total = total_income - total_outcome;
+            // let total = $('#total_income_2').data('income') -  $('#total_outcome').data('outcome');
             // $('#total_income_2').text(total_income + ' شيكل');
             $('#remain_income').text(total + ' شيكل');
         }

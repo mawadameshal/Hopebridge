@@ -38,9 +38,20 @@
                         </header>
                         <ul class="card-body list-unstyled dropdown-list-group">
 
-                            @foreach(\App\Models\Activity::with('admin')->latest()->limit(5)->get() as $activity)
+                            <?php
+                                $activities = \App\Models\Activity::with('admin')
+                                    ->selectRaw('DATE(activities.created_at) as activity_date, details as combined_details, MAX(url) as url, MAX(users.name) as user_name')
+                                    ->leftJoin('users', 'users.id', '=', 'admin_id')
+                                    ->latest('activities.created_at')
+                                    ->groupBy('activity_date')
+                                    ->groupBy('combined_details')
+                                    ->limit(5)
+                                    ->get();
+
+                                ?>
+                            @foreach($activities as $activity)
                                 <li>
-                                    <a href="{{$activity->url}}" class="">{{$activity->admin->name}}<br> {{$activity->details}} <br>{{$activity->created_at}}</a>
+                                    <a href="{{$activity->url}}" class="">{{$activity->user_name}}<br> {{$activity->combined_details}} <br>{{$activity->activity_date}}</a>
                                 </li>
                             @endforeach
                         </ul>

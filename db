@@ -3,3 +3,23 @@ ALTER TABLE `furniture` ADD `orphan_status` INT NULL DEFAULT NULL AFTER `status`
 UPDATE `furniture` SET orphan_status = 1 WHERE id in (2,3,5,6,8,9,10,11,12,13);
 ALTER TABLE `activities` ADD `url` VARCHAR(1500) NULL DEFAULT NULL AFTER `to`;
 
+CREATE TABLE `orphan_projects` (
+ `id` int unsigned NOT NULL AUTO_INCREMENT,
+ `orphan_id` int unsigned NOT NULL,
+ `project_id` int unsigned NOT NULL,
+ `user_id` int unsigned NOT NULL,
+ `note` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+ `created_at` timestamp NULL DEFAULT NULL,
+ `updated_at` timestamp NULL DEFAULT NULL,
+ `deleted_at` timestamp NULL DEFAULT NULL,
+ `print_id` int NOT NULL,
+ `coupon_no` int DEFAULT '0',
+ `tag` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+ PRIMARY KEY (`id`),
+ KEY `orphan_projects_orphan_id_foreign` (`orphan_id`),
+ KEY `orphan_projects_project_id_foreign` (`project_id`),
+ KEY `orphan_projects_user_id_foreign` (`user_id`),
+ CONSTRAINT `orphan_projects_orphan_id_foreign` FOREIGN KEY (`orphan_id`) REFERENCES `orphans` (`id`),
+ CONSTRAINT `orphan_projects_project_id_foreign` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`),
+ CONSTRAINT `orphan_projects_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=42668 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci

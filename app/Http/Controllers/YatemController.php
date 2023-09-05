@@ -21,6 +21,7 @@ use App\Models\HouseWallMaterial;
 use App\Models\Jender;
 use App\Models\main_reason;
 use App\Models\Orphan;
+use App\Models\OrphanProject;
 use App\Models\OrphanSponser;
 use App\Models\Outcome;
 use App\Models\Project;
@@ -1035,6 +1036,19 @@ class YatemController extends Controller
     {
         Orphan::where('id', $id)->update(['approval_delete' => 1]);
         return redirect()->back()->with('msg', 'تم قبول حذف اليتيم بنجاح');
+    }
+
+    public function OrphanProjects($id)
+    {
+        return DataTables::of(OrphanProject::with('Project')
+            ->where('orphan_id', $id)
+        )->make(true);
+    }
+
+    public function OrphanProjects2($id)
+    {
+        return view('yatem.projects', ['projects' => OrphanProject::with('Project')
+            ->where('orphan_id', $id)->get()])->render();
     }
 
 

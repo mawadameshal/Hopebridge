@@ -14,7 +14,8 @@
             <div class="form-group row">
                 <label class=" text-left col-md-4">متوسط الدخل الشهري بالشيكل</label>
                 <div class="col-md-8">
-                    <input type="number" name="name_income" value="{{intval($customer->name_income)}}" class="form-control" required>
+                    <input type="number" name="name_income" value="{{intval($customer->name_income)}}"
+                           class="form-control" required>
                     <span class="name_income" style="color: darkred"></span>
                 </div>
             </div>
@@ -32,12 +33,17 @@
                 <tbody>
                 @foreach($customer->incomes as $income)
                     <tr>
-                        <td><input type="text" name="income_source[]" readonly value="{{$income->income_source}}"  class="form-control" ></td>
-                        <td><input type="text" name="income_type[]" readonly value="{{$income->income_type}}"  class="form-control" ></td>
-                        <td><input type="number" name="income_amount[]" readonly value="{{$income->income_amount}}"   class="form-control income_amount" ></td>
-                        <td><input type="text" name="income_side[]" readonly value="{{$income->income_side}}"  class="form-control" ></td>
+                        <td><input type="text" name="income_source[]" readonly value="{{$income->income_source}}"
+                                   class="form-control"></td>
+                        <td><input type="text" name="income_type[]" readonly value="{{$income->income_type}}"
+                                   class="form-control"></td>
+                        <td><input type="number" name="income_amount[]" readonly value="{{$income->income_amount}}"
+                                   class="form-control income_amount"></td>
+                        <td><input type="text" name="income_side[]" readonly value="{{$income->income_side}}"
+                                   class="form-control"></td>
                         <td>
-                            <a href="javascript:;" class="delete-income btn btn-danger btn-sm" ><i class="fa fa-times"></i></a>
+                            <a href="javascript:;" class="delete-income btn btn-danger btn-sm"><i
+                                        class="fa fa-times"></i></a>
                         </td>
                     </tr>
                 @endforeach
@@ -51,7 +57,6 @@
                     <td>
                         <a href="javascript:;" class="add-new btn btn-success btn-sm"><i
                                     class="fa fa-plus"></i></a>
-                        {{--                                                <a href="javascript:;" class="add btn btn-danger btn-sm" ><i class="fa fa-times"></i></a>--}}
                     </td>
                 </tr>
                 </tbody>
@@ -76,50 +81,11 @@
                 @foreach($outcomes as $outcome)
                     <tr>
                         <td>{{$outcome->name}}</td>
-                        <td><input type="number" id="outcome_rent" name="outcome[{{$outcome->id}}]" value="{{$customer->outcomes->where('id',$outcome->id)->first()->pivot->amount??''}}"
+                        <td><input type="number" id="outcome_rent" name="outcome[{{$outcome->id}}]"
+                                   value="{{$customer->outcomes->where('id',$outcome->id)->first()->pivot->amount??''}}"
                                    class="form-control outcome_price"></td>
                     </tr>
                 @endforeach
-
-                {{--            <tr>--}}
-                {{--                <td>كهرباء ومياه</td>--}}
-                {{--                <td><input type="number" id="outcome_water"--}}
-                {{--                           class="form-control outcome_price"></td>--}}
-                {{--            </tr>--}}
-
-
-                {{--            <tr>--}}
-                {{--                <td>العلاج (الأمراض المزمنة)</td>--}}
-                {{--                <td><input type="number" id="outcome_treatment"--}}
-                {{--                           class="form-control outcome_price"></td>--}}
-                {{--            </tr>--}}
-
-
-                {{--            <tr>--}}
-                {{--                <td>غذاء شامل (لحوم وخضار)</td>--}}
-                {{--                <td><input type="number" id="outcome_food"--}}
-                {{--                           class="form-control outcome_price"></td>--}}
-                {{--            </tr>--}}
-                {{--            <tr>--}}
-                {{--                <td>مستلزمات البقالة</td>--}}
-                {{--                <td><input type="number" id="outcome_primary"--}}
-                {{--                           class="form-control outcome_price"></td>--}}
-                {{--            </tr>--}}
-
-
-                {{--            <tr>--}}
-                {{--                <td>رسوم دراسية تشمل رياض الأطفال والمدارس</td>--}}
-                {{--                <td><input type="number" id="outcome_study"--}}
-                {{--                           class="form-control outcome_price"></td>--}}
-                {{--            </tr>--}}
-
-                {{--            <tr>--}}
-                {{--                <td>رسوم دراسية جامعية</td>--}}
-                {{--                <td><input type="number" id="outcome_rent"--}}
-                {{--                           class="form-control outcome_price"></td>--}}
-                {{--            </tr>--}}
-
-
                 </tbody>
 
                 <tfoot>
@@ -135,13 +101,11 @@
 
                 <tr>
                     <td>المتبقي من الدخل</td>
-                    <td id="remain_income">{{$customer->income_sum-$customer->outcome_sum}}</td>
+                    <td id="remain_income">{{$customer->income_sum - $customer->outcome_sum}}</td>
                 </tr>
                 </tfoot>
 
             </table>
         </div>
-
-
     </div>
 </form>

@@ -279,6 +279,9 @@ Route::get('OrphanSalary/{id}', 'YatemController@getOrphanSalary');
 Route::get('Orphan/v1/create', 'YatemController@create_1');
 Route::get('Orphan/delete/{id}', 'YatemController@delete');
 
+Route::get('orphanProject/{id}', 'YatemController@OrphanProjects');
+Route::get('orphanProject2/{id}', 'YatemController@OrphanProjects2');
+
 Route::get('Orphan/v1/{id}/edit', 'YatemController@edit_1');
 Route::get('Orphan/v1/{id}/show', 'YatemController@show_1');
 

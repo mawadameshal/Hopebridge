@@ -193,7 +193,9 @@ class Customer extends Model
                 foreach ($changes as $attr => $value) {
                     $data .= $attr . ":{" . $product->getOriginal($attr) . '=>' . $product->$attr . "},";
                 }
-                Activity::log('customer', " تمت تعديل بيانات المستفيد ({$product->name}) ", $data);
+                $url = "/Customer/v1/{$product->id}/edit";
+
+                Activity::log('customer', " تمت تعديل بيانات المستفيد ({$product->name}) ", $data,$url);
             }
 
         });
