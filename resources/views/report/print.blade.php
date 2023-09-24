@@ -24,18 +24,20 @@
                 page-break-after: avoid;
             }
 
-            .printer table {
-                direction: ltr !important;
-                margin: 50px 100px;
-                counter-reset: rowNumber;
-                border-collapse: collapse; /* Add this line for better border rendering */
+            table {
+                border: 1px solid #000 !important;
+                direction: ltr;
+                font-weight: normal;
+                border-collapse: collapse;
+                width: 98% !important;
+                background-color: #f2f2f2;
             }
 
-            .printer tr {
+            table tr {
                 counter-increment: rowNumber;
             }
 
-            .printer tr td:nth-child(8)::before {
+            table tr td:nth-child(8)::before {
                 content: counter(rowNumber);
                 min-width: 1em;
                 margin-right: 0.5em;
@@ -50,24 +52,10 @@
                 direction: rtl;
             }
 
-            table {
-                direction: ltr;
-            }
-
             table th, tr, td {
-                border: 1px solid #000000;
-                padding: 8px; /* Add padding for better cell content spacing */
-            }
-
-            .printer table th,
-            .printer tr,
-            .printer td {
-                border: 1px solid #000000;
-                padding: 8px; /* Add padding for better cell content spacing */
-            }
-
-            .printer th {
-                background-color: #f2f2f2; /* Add a background color for table headers */
+                border: 1px solid #000 !important;
+                font-weight: normal !important;
+                padding: 8px !important;
             }
         }
 
@@ -184,7 +172,7 @@
                                                                                value="1" id="example-select-all"></th>
                             <th align="center">الرقم</th>
                             <th align="center">رقم الملف</th>
-                            <th align="center" style="width: 5%">رقم الكشف</th>
+                            <th align="center">رقم الكشف</th>
                             <th align="center">الاسم</th>
                             <th align="center"> الهوية</th>
                             <th align="center">افراد</th>
@@ -494,7 +482,6 @@
                                     },
 
                                 },
-
                             },
                             {
                                 extend: 'excel',

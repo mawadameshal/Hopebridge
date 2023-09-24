@@ -355,80 +355,56 @@ class CustomerCopy extends Model
             $points += $this->qualification->values;
 
 //        add family count
-        if ($this->family_count) {
-            if (intval($this->family_count) < 5) {
-                $points += 4;
-            } else if (intval($this->family_count) <= 9) {
-                $points += 7;
-            } else {
+        if ($this->family_count_total) {
+            if (intval($this->family_count_total) >= 10) {
                 $points += 9;
+            } else if (intval($this->family_count_total) >= 6 && intval($this->family_count_total) <= 9) {
+                $points += 5;
+            } else {
+                $points += 4;
             }
         }
 
-//        add other family
 
-        if ($this->other_member == '1') {
-            $points += 5;
-        }
-
-//        add child working
-        if (intval($this->child_working) == 0) {
+        if (intval($this->child_school) >= 1 && intval($this->child_school) <= 2) {
             $points += 1;
-        } else if (intval($this->child_working) <= 2) {
-            $points += 3;
-        }
-
-        if (intval($this->child_not_working) >= 4) {
-            $points += 2;
-        } else {
-            $points += 1;
-        }
-
-        if (intval($this->child_school) >= 5) {
-            $points += 3;
         } else if (intval($this->child_school) >= 3) {
             $points += 2;
-        } else {
-            $points += 1;
         }
 
-        if (intval($this->child_university) >= 4) {
-            $points += 4;
-        } elseif (intval($this->child_university) >= 2) {
-            $points += 3;
-        } elseif (intval($this->child_university) >= 1) {
+        if (intval($this->child_university) >= 1 && intval($this->child_university) <= 2) {
             $points += 2;
-        }
-
-
-        if (intval($this->child_special) >= 3) {
-            $points += 5;
-        } elseif (intval($this->child_special) >= 1) {
+        } elseif (intval($this->child_university) >= 3) {
             $points += 3;
         }
 
-        if ($this->name_income) {
+        if (intval($this->child_special) == 1) {
+            $points += 2;
+        } elseif (intval($this->child_special) >= 2) {
+            $points += 3;
+        }
+
+        if ($this->income_sum) {
 //        father income
-            if (intval($this->name_income)) {
-                if (intval($this->name_income) < 1000) {
-                    $points += 9;
-                } elseif (intval($this->name_income) <= 1500) {
-                    $points += 7;
-                } else {
+            if (intval($this->income_sum)) {
+                if (intval($this->income_sum) >= 1500) {
                     $points += 3;
+                } elseif (intval($this->income_sum) <= 500 ) {
+                    $points += 8;
+                } else {
+                    $points += 7;
                 }
             }
         }
+        if ($this->income_sum && $this->outcome_sum) {
 
-        if ($this->name_income && $this->outcome_sum) {
-
-            $remain = intval($this->name_income) - intval($this->outcome_sum);
-            if ($remain < 500) {
+            $remain = intval($this->income_sum) - intval($this->outcome_sum);
+            if ($remain <= 0) {
                 $points += 8;
-            } elseif ($remain == 500) {
+            } elseif ($remain > 0 && $remain < 300) {
                 $points += 5;
             } else {
-                $points += 2;
+                $points += 0;
             }
         }
 
@@ -456,7 +432,6 @@ class CustomerCopy extends Model
         }
 
         $this->update(['total' => $points]);
-        // print_r($this->total);exit;
         return $points;
     }
 }

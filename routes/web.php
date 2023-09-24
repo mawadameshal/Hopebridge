@@ -236,7 +236,7 @@ Route::post('Customer/reject/{id}', 'CustomerController@reject');
 Route::post('Customer/approve/{id}', 'CustomerController@approve');
 Route::get('Customer/recovery/{id}', 'CustomerController@recovery');
 Route::get('Customer/calculatePoint/{id}', function ($id) {
-    \App\Models\Customer::find($id)->calculatePoint();
+      \App\Models\Customer::find($id)->calculatePoint();
 });
 //Reports
 Route::get('Report/NeedCustomer', 'CustomerController@needCustomer');

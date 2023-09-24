@@ -166,11 +166,11 @@ class CustomerController extends Controller
 
     function create_1()
     {
-        if(session()->get('customer_id')){
+        if (session()->get('customer_id')) {
             session()->forget('customer_id');
         }
-        
-       
+
+
         parent::getDataCounters();
 
         if (!in_array(28, parent::$data["allowedActions"]))
@@ -661,7 +661,7 @@ class CustomerController extends Controller
 
         }
 
-        return redirect()->back()->with('msg', 'تم الحفظ بنجاح')->with(['stage'=>8, 'id' => $id]);
+        return redirect()->back()->with('msg', 'تم الحفظ بنجاح')->with(['stage' => 8, 'id' => $id]);
 
         // return response(['status' => 'success', 'msg' => 'تم الحفظ بنجاح', 'id' => $id]);
     }
@@ -694,6 +694,7 @@ class CustomerController extends Controller
 //            }
 
             $customercopy = CustomerCopy::where('main_id', $id)->first();
+            $points = 0;
             if ($customercopy) {
 //                $data['main_id'] = $id;
                 $customercopy->update($data);
@@ -740,6 +741,7 @@ class CustomerController extends Controller
 //                $points = $customer->calculatePoint();
 //            }
             $customercopy = CustomerCopy::where('main_id', $id)->first();
+            $points = 0;
             if ($customercopy) {
                 $data['main_id'] = $id;
                 $customercopy->update($data);
@@ -858,19 +860,21 @@ class CustomerController extends Controller
 
 
             $furnitures = [];
+            if ($request->furnitures) {
+                foreach ($request->furnitures as $key => $furniture) {
 
-            foreach ($request->furnitures as $key => $furniture) {
+                    $furnitures [$key] = [
+                        'count' => $furniture ?? 0,
+                        'rate' => $request->furnitures_rate[$key] ?? 0,
+                        'user_id' => auth()->id(),
+                    ];
 
-                $furnitures [$key] = [
-                    'count' => $furniture ?? 0,
-                    'rate' => $request->furnitures_rate[$key] ?? 0,
-                    'user_id' => auth()->id(),
-                ];
+                }
 
+
+                $customercopy->furnitures()->sync($furnitures);
             }
 
-
-            $customercopy->furnitures()->sync($furnitures);
 
             $needs = [];
             foreach ($request->need ?? [] as $key => $need) {
@@ -1254,16 +1258,15 @@ class CustomerController extends Controller
     {
 
         return DataTables::of(CustomerCopy::where('type', 1)
-            ->with('getstate', 'getregion', 'gettype', 'user','approved')->withCount('projects')->filter()
-        )->editColumn('updated_id', function($query) {
-                if($query->updated_id){
-                    return  User::where('id',$query->updated_id)->first()->name;
-                }else{
-                    return 'غير مدخل';
-                }
+            ->with('getstate', 'getregion', 'gettype', 'user', 'approved')->withCount('projects')->filter()
+        )->editColumn('updated_id', function ($query) {
+            if ($query->updated_id) {
+                return User::where('id', $query->updated_id)->first()->name;
+            } else {
+                return 'غير مدخل';
+            }
 
-            })
-
+        })
             ->addColumn('action', function ($query) {
                 $link = "";
                 if (in_array(30, parent::$data["allowedActions"]))
@@ -1333,7 +1336,7 @@ class CustomerController extends Controller
                     $customer_copy->incomes()->delete();
 
                     if ($customer_copy->outcomes) {
-                        $xx = CustomerOutcomeCopy::where('customer_id',$customer_copy->id)->get();
+                        $xx = CustomerOutcomeCopy::where('customer_id', $customer_copy->id)->get();
                         $outcomes = [];
                         foreach ($xx as $outcome) {
                             $outcomes [] = [
@@ -1344,21 +1347,21 @@ class CustomerController extends Controller
                         }
 
 
-                        CustomerOutcome::where('customer_id',$id)->delete();
-                        foreach($outcomes as $outcome){
+                        CustomerOutcome::where('customer_id', $id)->delete();
+                        foreach ($outcomes as $outcome) {
 
                             $obj_fur = new CustomerOutcome();
                             $obj_fur->customer_id = $id;
-                            $obj_fur->amount =  $outcome['amount'];
+                            $obj_fur->amount = $outcome['amount'];
                             $obj_fur->outcome_id = $outcome['outcome_id'];
                             $obj_fur->save();
                         }
 
                     }
-                    CustomerOutcomeCopy::where('customer_id',$customer_copy->id)->delete();
-                    
+                    CustomerOutcomeCopy::where('customer_id', $customer_copy->id)->delete();
+
                     if ($customer_copy->furnitures) {
-                        $xx = CustomerFurnitureCopy::where('customer_copy_id',$customer_copy->id)->get();
+                        $xx = CustomerFurnitureCopy::where('customer_copy_id', $customer_copy->id)->get();
                         $furnitures = [];
                         foreach ($xx as $furniture) {
                             $furnitures [] = [
@@ -1369,12 +1372,12 @@ class CustomerController extends Controller
                             ];
 
                         }
-                         CustomerFurniture::where('customer_id',$id)->delete();
-                        foreach($furnitures as $furniture){
+                        CustomerFurniture::where('customer_id', $id)->delete();
+                        foreach ($furnitures as $furniture) {
 
                             $obj_fur = new CustomerFurniture();
                             $obj_fur->customer_id = $id;
-                            $obj_fur->furniture_id =  $furniture['furniture_id'];
+                            $obj_fur->furniture_id = $furniture['furniture_id'];
                             $obj_fur->rate = $furniture['rate'];
                             $obj_fur->count = $furniture['count'] ?? 0;
                             $obj_fur->user_id = $furniture['user_id'];
@@ -1382,7 +1385,7 @@ class CustomerController extends Controller
                         }
 
                     }
-                    CustomerFurnitureCopy::where('customer_copy_id',$customer_copy->id)->delete();
+                    CustomerFurnitureCopy::where('customer_copy_id', $customer_copy->id)->delete();
 
                     if ($customer_copy->needs) {
                         $needs = [];
@@ -1425,9 +1428,9 @@ class CustomerController extends Controller
                     }
                     $customer_copy->childs()->delete();
 
-                    if($customer_copy->attachments){
+                    if ($customer_copy->attachments) {
                         $attachments = [];
-                        foreach ($customer_copy->attachments as  $attachment) {
+                        foreach ($customer_copy->attachments as $attachment) {
                             $attachments[] = [
                                 'name' => $attachment->name,
                                 'title' => $attachment->title
@@ -1447,9 +1450,9 @@ class CustomerController extends Controller
                 elseif ($request['submit'] == 'reject') {
                     $customer_copy->childs()->delete();
                     $customer_copy->needs()->delete();
-                    CustomerFurnitureCopy::where('customer_copy_id',$customer_copy->id)->delete();
+                    CustomerFurnitureCopy::where('customer_copy_id', $customer_copy->id)->delete();
                     $customer_copy->incomes()->delete();
-                    CustomerOutcomeCopy::where('customer_id',$customer_copy->id)->delete();
+                    CustomerOutcomeCopy::where('customer_id', $customer_copy->id)->delete();
                     $customer_copy->attachments()->delete();
                     $customer_copy->delete();
 
@@ -1481,7 +1484,7 @@ class CustomerController extends Controller
                     $customer_copy->incomes()->delete();
 
                     if ($customer_copy->outcomes) {
-                        $xx = CustomerOutcomeCopy::where('customer_id',$customer_copy->id)->get();
+                        $xx = CustomerOutcomeCopy::where('customer_id', $customer_copy->id)->get();
                         $outcomes = [];
                         foreach ($xx as $outcome) {
                             $outcomes [] = [
@@ -1492,21 +1495,21 @@ class CustomerController extends Controller
                         }
 
 
-                        CustomerOutcome::where('customer_id',$id)->delete();
-                        foreach($outcomes as $outcome){
+                        CustomerOutcome::where('customer_id', $id)->delete();
+                        foreach ($outcomes as $outcome) {
 
                             $obj_fur = new CustomerOutcome();
                             $obj_fur->customer_id = $id;
-                            $obj_fur->amount =  $outcome['amount'];
+                            $obj_fur->amount = $outcome['amount'];
                             $obj_fur->outcome_id = $outcome['outcome_id'];
                             $obj_fur->save();
                         }
 
                     }
-                    CustomerOutcomeCopy::where('customer_id',$customer_copy->id)->delete();
+                    CustomerOutcomeCopy::where('customer_id', $customer_copy->id)->delete();
 
                     if ($customer_copy->furnitures) {
-                        $xx = CustomerFurnitureCopy::where('customer_copy_id',$customer_copy->id)->get();
+                        $xx = CustomerFurnitureCopy::where('customer_copy_id', $customer_copy->id)->get();
                         $furnitures = [];
                         foreach ($xx as $furniture) {
                             $furnitures [] = [
@@ -1517,12 +1520,12 @@ class CustomerController extends Controller
                             ];
 
                         }
-                        CustomerFurniture::where('customer_id',$id)->delete();
-                        foreach($furnitures as $furniture){
+                        CustomerFurniture::where('customer_id', $id)->delete();
+                        foreach ($furnitures as $furniture) {
 
                             $obj_fur = new CustomerFurniture();
                             $obj_fur->customer_id = $id;
-                            $obj_fur->furniture_id =  $furniture['furniture_id'];
+                            $obj_fur->furniture_id = $furniture['furniture_id'];
                             $obj_fur->rate = $furniture['rate'];
                             $obj_fur->count = $furniture['count'] ?? 0;
                             $obj_fur->user_id = $furniture['user_id'];
@@ -1530,7 +1533,7 @@ class CustomerController extends Controller
                         }
 
                     }
-                    CustomerFurnitureCopy::where('customer_copy_id',$customer_copy->id)->delete();
+                    CustomerFurnitureCopy::where('customer_copy_id', $customer_copy->id)->delete();
 
                     if ($customer_copy->needs) {
                         $needs = [];
@@ -1573,9 +1576,9 @@ class CustomerController extends Controller
                     }
                     $customer_copy->childs()->delete();
 
-                    if($customer_copy->attachments){
+                    if ($customer_copy->attachments) {
                         $attachments = [];
-                        foreach ($customer_copy->attachments as  $attachment) {
+                        foreach ($customer_copy->attachments as $attachment) {
                             $attachments[] = [
                                 'name' => $attachment->name,
                                 'title' => $attachment->title
@@ -1592,9 +1595,9 @@ class CustomerController extends Controller
                 } else {
                     $customer_copy->childs()->delete();
                     $customer_copy->needs()->delete();
-                    CustomerFurnitureCopy::where('customer_copy_id',$customer_copy->id)->delete();
+                    CustomerFurnitureCopy::where('customer_copy_id', $customer_copy->id)->delete();
                     $customer_copy->incomes()->delete();
-                    CustomerOutcomeCopy::where('customer_id',$customer_copy->id)->delete();
+                    CustomerOutcomeCopy::where('customer_id', $customer_copy->id)->delete();
                     $customer_copy->attachments()->delete();
                     $customer_copy->delete();
                     return redirect()->back()->with('msg', 'تم رفض اضافة المستفيد');
@@ -1785,9 +1788,6 @@ class CustomerController extends Controller
         parent::$data['Relation'] = RelationType::all();
 
         return view('report.report', parent::$data);
-//        $posts = Customer::with('getType')->leftjoin('customer_projects', 'customers.id', '=', 'customer_projects.customer_id')
-//            ->select(['customers.id', 'customers.name', 'customers.address', 'customers.mobile', 'customers.type', 'customers.updated_at']);
-//        dd($posts->get());
     }
 
     //
@@ -1800,11 +1800,11 @@ class CustomerController extends Controller
             ->orderBy('total', 'DESC');
 
         if ($project_id) {
-
             $posts = $posts->whereDoesntHave('projects', function ($q) use ($project_id) {
-                $q->whereIn('projects.id', $project_id);
+                $q->whereIn('projects.id', $project_id)->whereNull('customer_projects.deleted_at');
             });
         }
+
 
         return Datatables::of($posts)->addcolumn('action', function ($query) {
             return '<a href="' . url('customerProject2/' . $query->id) . '" id="project_count" class="btn btn-success">عرض المشاريع</a>
@@ -2080,7 +2080,7 @@ class CustomerController extends Controller
                     $q->where('state_id', $state_id);
 
             })
-            ->where(function ($q) use ($coupon_from, $coupon_to, $project,$tag) {
+            ->where(function ($q) use ($coupon_from, $coupon_to, $project, $tag) {
                 if (($coupon_from))
                     $q->where('coupon_no', '>=', $coupon_from);
                 if (($coupon_to))
@@ -2222,24 +2222,25 @@ class CustomerController extends Controller
         }
 
     }
-    
-    public function activities(){
-        parent::$data['title']='عرض جميع الاشعارات';
+
+    public function activities()
+    {
+        parent::$data['title'] = 'عرض جميع الاشعارات';
         parent::getDataCounters();
-        parent::$data['perm']=10;
-        parent::$data['page_name']='الاشعارات';
+        parent::$data['perm'] = 10;
+        parent::$data['page_name'] = 'الاشعارات';
         // parent::$data['activities']=Activity::orderBy('id','DESC')->get();
 
-        return view("home.activities",parent::$data);
+        return view("home.activities", parent::$data);
     }
 
     public function getactivity(Request $request)
     {
-        return DataTables::of(Activity::with('admin')->latest()->limit(100)->orderBy('id','DESC')->filter()
+        return DataTables::of(Activity::with('admin')->latest()->limit(100)->orderBy('id', 'DESC')->filter()
         )->make(true);
     }
-    
-     public function delete_customers_from_project(Request $request)
+
+    public function delete_customers_from_project(Request $request)
     {
         $proj_id = $request->project_id;
         if ($proj_id == "") {
@@ -2248,13 +2249,14 @@ class CustomerController extends Controller
         }
         // print_r($request->get('ids'));exit();
         if ($request->get('ids'))
-            CustomerProject::where('project_id',$proj_id)->whereIn('customer_id',$request->get('ids'))->delete();
+            CustomerProject::where('project_id', $proj_id)->whereIn('customer_id', $request->get('ids'))->delete();
 
         return response(["status" => true, "message" => "تمت العملية بنجاح", 200]);
     }
-    
-   
- public function calc($id){
+
+
+    public function calc($id)
+    {
         $customer = Customer::find($id);
         $points = 0;
 
@@ -2311,8 +2313,9 @@ class CustomerController extends Controller
         } elseif (intval($customer->child_special) >= 1) {
             $points += 3;
         }
-        
-        print_r($points);exit();
+
+        print_r($points);
+        exit();
 
     }
 }

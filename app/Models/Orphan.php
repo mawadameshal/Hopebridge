@@ -209,105 +209,71 @@ class Orphan extends Model
     function calculatePoint()
     {
         $points = 0;
-//        add social
-        if ($this->social)
-            $points += $this->social->values;
-//        add health
-        if ($this->health)
-            $points += $this->health->value;
-//        add qualification
-        if ($this->qualification)
-            $points += $this->qualification->values;
 
-//        add family count
-        if ($this->family_count) {
-            if (intval($this->family_count) < 5) {
-                $points += 4;
-            } else if (intval($this->family_count) <= 9) {
-                $points += 7;
-            } else {
-                $points += 9;
+//        add orphan missing
+        if ($this->orphan_missing){
+            if($this->orphan_missing == 3){
+                $points += 3;
+            }elseif ($this->orphan_missing == 2){
+                $points += 2;
+            }else{
+                $points += 0;
             }
         }
 
-//        add other family
-
-        if ($this->other_member == '1') {
-            $points += 5;
-        }
-
-//        add child working
-        if (intval($this->child_working) == 0) {
-            $points += 1;
-        } else if (intval($this->child_working) <= 2) {
-            $points += 3;
-        }
-
-        if (intval($this->child_not_working) >= 4) {
-            $points += 2;
-        } else {
-            $points += 1;
-        }
-
-        if (intval($this->child_school) >= 5) {
-            $points += 3;
-        } else if (intval($this->child_school) >= 3) {
-            $points += 2;
-        } else {
-            $points += 1;
-        }
-
-        if (intval($this->child_university) >= 4) {
-            $points += 4;
-        } elseif (intval($this->child_university) >= 2) {
-            $points += 3;
-        } elseif (intval($this->child_university) >= 1) {
-            $points += 2;
-        }
-
-
-        if (intval($this->child_special) >= 3) {
-            $points += 5;
-        } elseif (intval($this->child_special) >= 1) {
-            $points += 3;
-        }
-
-//        father income
-        if (intval($this->income)) {
-            if (intval($this->income) < 1000) {
-                $points += 9;
-            } elseif (intval($this->income) <= 1500) {
-                $points += 7;
-            } else {
+//        add orphan guarantee
+        if ($this->child_guaranteed){
+            if($this->child_guaranteed == 1){
+                $points += 0;
+            }else{
                 $points += 3;
             }
         }
 
+//        add orphan guardians_relative_relation
+        if ($this->guardians_relative_relation){
+            if($this->guardians_relative_relation == 'ام'){
+                $points += 3;
+            }elseif ($this->guardians_relative_relation == 'جد' || $this->guardians_relative_relation == 'عم' || $this->guardians_relative_relation == 'خال'){
+                $points += 2;
+            }else{
+                $points += 1;
+            }
+        }
 
-        $remain = intval($this->income) - intval($this->outcome_sum);
-        if ($remain < 500) {
-            $points += 8;
-        } elseif ($remain == 500) {
-            $points += 5;
-        } else {
-            $points += 2;
+//        add mother_current_marital_status
+        if ($this->mother_current_marital_status){
+            if($this->mother_current_marital_status == 1){
+                $points += 3;
+            }elseif ($this->mother_current_marital_status == 2) {
+                $points += 2;
+            }else {
+                $points += 0;
+            }
+        }
+
+//        add do_children_live_with_their_mother
+        if ($this->do_children_live_with_their_mother){
+            if($this->do_children_live_with_their_mother == 1){
+                $points += 2;
+            }else {
+                $points += 1;
+            }
         }
 
 
-//        house info
+//        add family count
+        if ($this->family_count_total) {
+            if (intval($this->family_count_total) >= 7) {
+                $points += 8;
+            } else if (intval($this->family_count_total) >=4 && intval($this->family_count_total) <= 6) {
+                $points += 6;
+            } else {
+                $points += 4;
+            }
+        }
 
-        if ($this->houseOwner) {
-            $points += intval($this->houseOwner->values);
-        }
-        if ($this->HouseType) {
-            $points += intval($this->HouseType->values);
-        }
-        if ($this->HouseMaterial) {
-            $points += intval($this->HouseMaterial->values);
-        }
 
-        $furnitures_points = $this->furnituresSum;
-        $points += $furnitures_points;
 
         if ($this->researcher_rate) {
             $points += intval($this->researcher_rate);
