@@ -96,9 +96,34 @@ class Orphan extends Model
         return $this->belongsTo(HouseMaterial::class, 'house_material', 'id');
     }
 
+    function HouseGeneralCondition()
+    {
+        return $this->belongsTo(HouseGeneralCondition::class, 'house_general_condition', 'id');
+    }
+
     function furnitures()
     {
         return $this->belongsToMany(Furniture::class, 'orphan_furnitures', 'orphan_id', 'furniture_id')->withPivot('count', 'rate');
+    }
+
+
+// additional helper relation for the count
+    public function furnituresSum()
+    {
+        return $this->belongsToMany(Furniture::class,'orphan_furnitures','orphan_id')
+            ->withPivot('count', 'rate')
+            ->selectRaw('sum(orphan_furnitures.rate) as aggregate')
+            ->groupBy('orphan_id');
+    }
+
+// accessor for easier fetching the count
+    public function getFurnituresSumAttribute()
+    {
+        if ( ! array_key_exists('furnituresSum', $this->relations)) $this->load('furnituresSum');
+
+        $related = $this->getRelation('furnituresSum')->first();
+
+        return ($related) ? $related->aggregate : 0;
     }
 
     public function needs()
@@ -273,15 +298,116 @@ class Orphan extends Model
             }
         }
 
+        if (intval($this->school_stage_students) >= 1 && intval($this->school_stage_students) <= 2) {
+            $points += 1;
+        } else if (intval($this->school_stage_students) >= 3) {
+            $points += 2;
+        }else{
+            $points += 0;
+        }
 
+        if (intval($this->undergraduate_students) >= 1 && intval($this->undergraduate_students) <= 2) {
+            $points += 2;
+        } elseif (intval($this->undergraduate_students) >= 3) {
+            $points += 3;
+        }else{
+            $points += 0;
+        }
+
+        if (intval($this->child_health_condition) == 1) {
+            $points += 0;
+        } elseif (intval($this->child_health_condition) == 2) {
+            $points += 1;
+        }elseif (intval($this->child_health_condition) == 3) {
+            $points += 3;
+        }elseif (intval($this->child_health_condition) == 4) {
+            $points += 6;
+        }
+
+        if (intval($this->child_psychological_behavioral_state) == 1) {
+            $points += 0;
+        } elseif (intval($this->child_psychological_behavioral_state) == 2) {
+            $points += 0.5;
+        }elseif (intval($this->child_psychological_behavioral_state) == 3) {
+            $points += 1;
+        }elseif (intval($this->child_psychological_behavioral_state) == 4) {
+            $points += 2;
+        }
+
+
+        if ($this->income_sum) {
+            if (intval($this->income_sum) < 500) {
+                $points += 10;
+            } elseif (intval($this->income_sum) >= 500 && intval($this->income_sum) < 1000) {
+                $points+= 8;
+            } elseif (intval($this->income_sum) >= 1000 && intval($this->income_sum) <= 1500) {
+                $points += 4;
+            } elseif (intval($this->income_sum) > 1500) {
+                $points += 2;
+            }
+        }
+
+//        house info
+        if ($this->HouseType) {
+            $points += $this->HouseType->orphan_values;
+        }
+
+        if ($this->houseOwner) {
+            $points += $this->houseOwner->orphan_values;
+        }
+
+        if ($this->HouseMaterial) {
+            $points += $this->HouseMaterial->orphan_values;
+        }
+
+        if ($this->HouseGeneralCondition) {
+            $points += $this->HouseGeneralCondition->values;
+        }
+
+        if($this->furnitures){
+            $furnitures_points = $this->furnituresSum;
+            $points += $furnitures_points;
+        }
 
         if ($this->researcher_rate) {
             $points += intval($this->researcher_rate);
         }
 
+        $orphan_childs = OrphanFamily::where('orphan_id',$this->id)->get();
+
+        if($orphan_childs){
+
+            $sick = 0;
+            $disability = 0;
+             foreach ($orphan_childs as $child){
+                 if ($child->health_id == 5){
+                     $sick += 1;
+                 }elseif ($child->health_id == 3){
+                     $disability += 1;
+                 }
+             }
+
+             if($sick == 1){
+                 $points += 0.5;
+             }elseif ($sick >= 2  && $sick <= 3){
+                 $points += 1.5;
+             } elseif ($sick > 3){
+                 $points += 2.5;
+             }
+
+            if($disability == 1){
+                $points += 1;
+            }elseif ($disability >= 2  && $disability <= 3){
+                $points += 3;
+            } elseif ($disability > 3){
+                $points += 5;
+            }
+        }
+
         $this->update(['total' => $points]);
         return $points;
     }
+
 
 
 

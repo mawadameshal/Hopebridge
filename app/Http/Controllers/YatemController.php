@@ -200,16 +200,6 @@ class YatemController extends Controller
 
     }
 
-//    public function delete($id){
-//
-//        $obj=WorkRegion::find($id);
-//        if(isset($obj)){
-//            $obj->delete();
-//            return response(['status'=>true,'message'=>trans('ar.delete_successfully'),201]);
-//        }
-//        return response(["status"=>false,"message"=>trans('ar.unsuccessful_state'),401]);
-//    }
-
     public function delete($id)
     {
 
@@ -792,6 +782,7 @@ class YatemController extends Controller
             'house_owner' => 'required',
             'house_type' => 'required|integer',
             'house_material' => 'required',
+            'house_general_condition' => 'required',
             'other_available' => '',
             'furnitures' => 'required|array',
             'furnitures_rate' => 'required|array',
@@ -799,8 +790,9 @@ class YatemController extends Controller
             'house_owner.required' => 'الرجاء اخنر بيانات السكن',
             'house_type.required' => 'الرجاء اخنر نوع السكن',
             'house_material.required' => 'الرجاء اخنر بناء السقف',
+            'house_general_condition.required' => 'الرجاء اخنر الحالة العامة للسكن',
         ]);
-        $data = $request->only('house_owner', 'house_type', 'house_material', 'other_available');
+        $data = $request->only('house_owner', 'house_type', 'house_material','house_general_condition', 'other_available');
         if (!$id)
             $data['stage'] = 9;
         else
@@ -887,7 +879,7 @@ class YatemController extends Controller
             'child_dob.*.date_format' => 'يجب ان يكون سنة الميلاد صحيحا',
         ]);
 
-        $data = $request->only('house_owner', 'house_type', 'house_material');
+        $data = $request->only('house_owner', 'house_type', 'house_material','house_general_condition');
         if (!$id)
             $data['stage'] = 7;
         else

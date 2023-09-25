@@ -65,7 +65,7 @@
                     <div class="row">
                         @foreach($HouseGeneralCondition as $condition)
                             <div class="col-md-2">
-                                <input type="radio" {{$condition->id==$orphan->house_material?"checked":""}}
+                                <input type="radio" {{$condition->id==$orphan->house_general_condition?"checked":""}}
                                 name="house_general_condition" id="house_general_condition-{{$condition->id}}"
                                        value="{{$condition->id}}">
                                 <label

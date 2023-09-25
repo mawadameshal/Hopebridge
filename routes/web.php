@@ -290,6 +290,12 @@ Route::post('Orphan/approve_create/{id}', 'YatemController@approve_create');
 Route::post('Orphan/approve_update/{id}', 'YatemController@approve_update');
 Route::post('Orphan/approve_delete/{id}', 'YatemController@approve_delete');
 Route::get('Orphan/recovery/{id}', 'YatemController@recovery');
+
+
+Route::get('Orphan/calculatePoint/{id}', function ($id) {
+     return \App\Models\Orphan::find($id)->calculatePoint();
+});
+
 Route::post('yatem/personal/{id?}', 'YatemController@personal')->name('yatem.personal'); 
 Route::post('yatem/information_of_orphan/{id?}', 'YatemController@information_of_orphan')->name('yatem.information_of_orphan'); 
 Route::post('yatem/father-info/{id?}', 'YatemController@fatherInfo')->name('yatem.fatherInfo'); 
