@@ -2,7 +2,7 @@
     <!-- Logo Area -->
     <div class="navbar-header">
         <a href="{{url('home')}}" class="navbar-brand">
-            <img class="logo-expand" width="100px" alt="" src="{{url('')}}/logo.png">
+            <img class="logo-expand" width="80px" alt="" src="{{url('')}}/logo.png">
             <img class="logo-collapse" width="50px" alt="" src="{{url('')}}/logo.png">
             <!-- <p>BonVue</p> -->
         </a>

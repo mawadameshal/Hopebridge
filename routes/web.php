@@ -356,3 +356,23 @@ Route::get('Widowed/calculatePoint/{id}', function ($id) {
 
 Route::post('getState', 'WidowedController@getState');
 
+
+//Orphan Reports
+Route::get('OrphanReport/NeedOrphan', 'YatemController@needOrphan');
+Route::get('OrphanReport/NeedOrphanData', 'YatemController@needOrphanData');
+
+Route::get('OrphanReport/EditNeedOrphan', 'YatemController@editNeedOrphan');
+Route::get('OrphanReport/EditNeedOrphanData', 'YatemController@editNeedOrphanData');
+
+
+Route::get('printOrphanReport', 'YatemController@printReport');
+Route::get('printOrphanReportData', 'YatemController@printReportData');
+
+Route::get('couponOrphan', 'YatemController@coupon');
+Route::post('couponOrphanPrint', 'YatemController@couponPrint');
+
+
+Route::post('apply/orphan', 'YatemController@applyOrphan');
+
+Route::post('Orphan/delete_orphans_from_project', 'YatemController@delete_orphans_from_project');
+

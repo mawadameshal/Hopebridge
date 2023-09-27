@@ -20,50 +20,76 @@
                         @endif
                         @if(in_array(27,$allowedActions))
                             <li><a href="{{url('Customer')}}">عرض المستفيدين</a>
-                            </li>@endif
-                            @if(auth()->user()->id == 2)
+                            </li>
+                        @endif
+                        @if(auth()->user()->id == 2)
                             <li><a href="{{url('ApprovalCustomer')}}">عرض المستفيدين الاحتياطيين</a>
-                            </li>@endif
+                            </li>
+                        @endif
                     </ul>
                 </li>
             @endif
 
             @if(in_array(35,$allowedActions))
-                    <li class="menu-item-has-children  @if (preg_match_all('/(Orphan|OrphanSearch)/',url()->current())) active  @endif">
-                        <a href="javascript:void(0);"><i class="list-icon feather feather-briefcase"></i> <span
-                                    class="hide-menu"> الأيتام  </span></a>
-                        <ul class="list-unstyled sub-menu">
-                            @if(in_array(28,$allowedActions))
-                                <li><a href="{{url('Orphan/v1/create')}}"> اضافة جديد</a></li>
-                            @endif
+                <li class="menu-item-has-children  @if (preg_match_all('/(Orphan|OrphanSearch)/',url()->current())) active  @endif">
+                    <a href="javascript:void(0);"><i class="list-icon feather feather-briefcase"></i> <span
+                                class="hide-menu"> الأيتام  </span></a>
+                    <ul class="list-unstyled sub-menu">
+                        @if(in_array(28,$allowedActions))
+                            <li><a href="{{url('Orphan/v1/create')}}"> اضافة جديد</a></li>
+                        @endif
 
-                                @if(in_array(27,$allowedActions))
+                        @if(in_array(27,$allowedActions))
                             <li>
                                 <a href="{{url('Orphan')}}">
                                     <i class="icon-home"></i> عرض الايتام </a>
                             </li>
-                                @endif
-                                @if(auth()->user()->id == 2)
-                                    <li>
+                        @endif
+                        @if(auth()->user()->id == 2)
+                            <li>
                                 <a href="{{url('ApprovalOrphan')}}">
                                     <i class="icon-home"></i> عرض الايتام الاحتياطيين </a>
                             </li>
-                                @endif
-                            @if(in_array(36,$allowedActions))
-                                <li>
-                                    <a href="{{url('OrphanSearch')}}">
-                                        <i class="icon-home"></i> استخراج كشف ايتام </a>
-                                </li>
-                            @endif
-                            @if(in_array(36,$allowedActions))
-                                <li>
-                                    <a href="{{url('OrphanSalary')}}">
-                                        <i class="icon-home"></i> تسجيل الكفالات الشهرية </a>
-                                </li>
-                            @endif
-                        </ul>
-                    </li>
-                @endif
+                        @endif
+                        @if(in_array(36,$allowedActions))
+                            <li>
+                                <a href="{{url('OrphanSearch')}}">
+                                    <i class="icon-home"></i> استخراج كشف ايتام </a>
+                            </li>
+                        @endif
+                        @if(in_array(36,$allowedActions))
+                            <li>
+                                <a href="{{url('OrphanSalary')}}">
+                                    <i class="icon-home"></i> تسجيل الكفالات الشهرية </a>
+                            </li>
+                        @endif
+                    </ul>
+                </li>
+            @endif
+
+            @if(in_array(31,$allowedActions))
+                <li class="menu-item-has-children  @if (preg_match_all('/(Orphan|OrphanSearch)/',url()->current())) active  @endif">
+                    <a href="javascript:void(0);"><i class="list-icon feather feather-briefcase"></i> <span
+                                class="hide-menu"> تقارير الأيتام  </span></a>
+                    <ul class="list-unstyled sub-menu">
+
+                        @if(in_array(32,$allowedActions))
+                            <li>
+                                <a href="{{url('OrphanReport/NeedOrphan')}}">
+                                    <i class="icon-home"></i> استخراج كشف أيتام جدد </a>
+                            </li>
+                        @endif
+                        @if(in_array(34,$allowedActions))
+                            <li>
+
+                                <a href="{{url('printOrphanReport')}}">
+                                    طباعة كشوفات التسليم الأيتام
+                                </a>
+                            </li>
+                        @endif
+                    </ul>
+                </li>
+            @endif
 
             @if(in_array(27,$allowedActions))
                 <li class="menu-item-has-children  @if (preg_match_all('/(Widowed|ammar)/',url()->current())) active  @endif">
@@ -76,11 +102,13 @@
                         @endif
                         @if(in_array(27,$allowedActions))
                             <li><a href="{{url('Widowed')}}">عرض السيدات الارامل</a>
-                            </li>@endif
+                            </li>
+                        @endif
 
-                            @if(auth()->user()->id == 2)
-                                <li><a href="{{url('ApprovalWidowed')}}">عرض الارامل الاحتياطيين</a>
-                                </li>@endif
+                        @if(auth()->user()->id == 2)
+                            <li><a href="{{url('ApprovalWidowed')}}">عرض الارامل الاحتياطيين</a>
+                            </li>
+                        @endif
                     </ul>
                 </li>
             @endif
@@ -113,13 +141,7 @@
                                     <i class="icon-home"></i> استخراج كشف مستفيدين جدد </a>
                             </li>
                         @endif
-
-                            @if(in_array(32,$allowedActions))
-                                <li>
-                                    <a href="{{url('Report/EditNeedCustomer')}}">
-                                        <i class="icon-home"></i> تعديل كشف مستفيدين </a>
-                                </li>
-                            @endif
+                        
                         @if(in_array(33,$allowedActions))
                             <li>
                                 <a href="{{url('recieveHelpReport')}}">

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Citizen;
-use App\Models\Customer;
 use App\Models\CustomerType;
 use App\Models\Education;
 use App\Models\Family;
@@ -1043,5 +1042,252 @@ class YatemController extends Controller
             ->where('orphan_id', $id)->get()])->render();
     }
 
+    public function printReport()
+    {
 
+        parent::getDataCounters();
+        parent::$data['title'] = 'طباعة كشوفات التسليم';
+        parent::$data["breadcrumb"] = "التقارير";
+        parent::$data["route"] = 'couponOrphanPrint';
+        parent::$data["Projects"] = Project::with('Sponser')->where('status', 1)->get();
+        parent::$data["States"] = State::where('status', 1)->get();
+
+        return view('orphans_report.print', parent::$data);
+    }
+
+    public function printReportData(Request $request)
+    {
+
+        $state_id = $request->get('state');
+        $coupon_from = $request->get('coupon_from');
+        $coupon_to = $request->get('coupon_to');
+        $project = $request->get('project');
+        $tag = $request->get('tag');
+
+        $orphans = OrphanProject::with('orphan')
+            ->whereHas('orphan', function ($q) use ($state_id) {
+                if (($state_id))
+                    $q->where('state_id', $state_id);
+
+            })
+            ->where(function ($q) use ($coupon_from, $coupon_to, $project, $tag) {
+                if (($coupon_from))
+                    $q->where('coupon_no', '>=', $coupon_from);
+                if (($coupon_to))
+                    $q->where('coupon_no', '<=', $coupon_to);
+                if (($project))
+                    $q->where('project_id', $project);
+                if (($tag))
+                    $q->where('tag', $tag);
+            });
+        if (!$project)
+            $orphans->limit(100);
+
+        return DataTables::of($orphans)->addColumn('sign', function ($q) {
+            return "";
+        })
+            ->make(true);
+
+    }
+
+    public function couponPrint(Request $request)
+    {
+
+        $state_id = $request->get('state');
+        $print_id = $request->get('print_id');
+        $coupon_from = $request->get('coupon_from');
+        $coupon_to = $request->get('coupon_to');
+        $project = $request->get('project_id');
+        $address = $request->get('address');
+        $date_s = $request->get('date_s');
+
+        //  dd($project);die;
+
+        $coupons = OrphanProject::with('orphan', 'Orphan.getState', 'Orphan.getRegion', 'project')
+            ->whereHas('orphan', function ($q) use ($state_id) {
+                if (isset($state_id))
+                    $q->where('state_id', $state_id);
+
+            })
+            ->where(function ($q) use ($coupon_from, $coupon_to, $project) {
+                if (isset($coupon_from))
+                    $q->where('coupon_no', '>=', $coupon_from);
+                if (isset($coupon_to))
+                    $q->where('coupon_no', '<=', $coupon_to);
+                if (isset($project))
+                    $q->where('project_id', $project);
+            })->get();
+
+        parent::$data["Coupons"] = $coupons;
+        parent::$data["address"] = $address;
+        parent::$data["date_s"] = $date_s;
+
+        //  dd($coupons);die;
+        return view('orphans_report.coupon', parent::$data);
+
+    }
+
+    // استخراج كشوفات المستفيدين
+    public function needOrphan()
+    {
+        parent::getDataCounters();
+        parent::$data["route"] = 'apply/orphan';
+        parent::$data["Projects"] = Project::where('status', 1)->get();
+        parent::$data['States'] = State::all();
+        parent::$data['Regions'] = Region::all();
+        parent::$data['HouseType'] = HouseType::where('status', 1)->get();
+        parent::$data['HouseMaterial'] = HouseMaterial::where('status', 1)->get();
+        parent::$data['Types'] = CustomerType::where('status', 1)->get();
+        parent::$data['RegionTypes'] = RegionType::all();
+        parent::$data['MainReasons'] = main_reason::all();
+        parent::$data['Educations'] = Education::where('status', 1)->get();
+        parent::$data['Works'] = Work::where('status', 1)->get();
+        parent::$data['WorkRegion'] = WorkRegion::where('status', 1)->get();
+        parent::$data['HouseOwner'] = HouseOwner::where('status', 1)->get();
+        parent::$data['HouseType'] = HouseType::where('status', 1)->get();
+        parent::$data['HouseWallMaterial'] = HouseWallMaterial::where('status', 1)->get();
+        parent::$data['HouseShower'] = HouseShower::where('status', 1)->get();
+        parent::$data['FoodGaz'] = FoodGaz::where('status', 1)->get();
+        parent::$data['HouseRoom'] = HouseRoom::where('status', 1)->get();
+        parent::$data['Furnitures'] = Furniture::where('status', 1)->get();
+        parent::$data['UserOpinion'] = UserOpinion::where('status', 1)->get();
+        parent::$data['Citizens'] = Citizen::where('status', 1)->get();
+        parent::$data['Jenders'] = Jender::all();
+        parent::$data['Healths'] = Health::all();
+        parent::$data['Relation'] = RelationType::all();
+
+        return view('orphans_report.report', parent::$data);
+    }
+
+    //
+    public function needOrphanData(Request $request)
+    {
+
+        $project_id = $request->get('project_id');
+
+        $posts = Orphan::with( 'getstate')->withCount('projects')->filter()
+            ->orderBy('total', 'DESC');
+
+        if ($project_id) {
+            $posts = $posts->whereDoesntHave('projects', function ($q) use ($project_id) {
+                $q->whereIn('projects.id', $project_id)->whereNull('orphan_projects.deleted_at');
+            });
+        }
+
+
+        return Datatables::of($posts)->addcolumn('action', function ($query) {
+            return '<a href="' . url('orphanProject/' . $query->id) . '" id="project_count" class="btn btn-success">عرض المشاريع</a>
+
+<label class="checkbox-inline parent-check">
+                    <input type="checkbox" name="selOrphan[]" value="' . $query->id . '" class="mycheckbox">
+                    <span class="label-checkbox">اختيار</span></label>';
+        })->make(true);
+
+    }
+
+
+    // تعديل كشف مستفيدين
+    public function editNeedOrphan()
+    {
+        parent::getDataCounters();
+        parent::$data["route"] = 'apply/orphan';
+        parent::$data["Projects"] = Project::where('status', 1)->get();
+        parent::$data['States'] = State::all();
+        parent::$data['Regions'] = Region::all();
+        parent::$data['HouseType'] = HouseType::where('status', 1)->get();
+        parent::$data['HouseMaterial'] = HouseMaterial::where('status', 1)->get();
+        parent::$data['RegionTypes'] = RegionType::all();
+        parent::$data['MainReasons'] = main_reason::all();
+        parent::$data['Educations'] = Education::where('status', 1)->get();
+        parent::$data['Works'] = Work::where('status', 1)->get();
+        parent::$data['WorkRegion'] = WorkRegion::where('status', 1)->get();
+        parent::$data['HouseOwner'] = HouseOwner::where('status', 1)->get();
+        parent::$data['HouseType'] = HouseType::where('status', 1)->get();
+        parent::$data['HouseWallMaterial'] = HouseWallMaterial::where('status', 1)->get();
+        parent::$data['HouseShower'] = HouseShower::where('status', 1)->get();
+        parent::$data['FoodGaz'] = FoodGaz::where('status', 1)->get();
+        parent::$data['HouseRoom'] = HouseRoom::where('status', 1)->get();
+        parent::$data['Furnitures'] = Furniture::where('status', 1)->get();
+        parent::$data['UserOpinion'] = UserOpinion::where('status', 1)->get();
+        parent::$data['Citizens'] = Citizen::where('status', 1)->get();
+        parent::$data['Jenders'] = Jender::all();
+        parent::$data['Healths'] = Health::all();
+        parent::$data['Relation'] = RelationType::all();
+
+        return view('orphans_report.editReport', parent::$data);
+    }
+
+    //
+    public function editNeedOrphanData(Request $request)
+    {
+
+        $project_id = $request->get('project_id');
+        $posts = Orphan::with('getstate')->withCount('projects')->filter()
+            ->orderBy('total', 'DESC');
+
+        if ($project_id) {
+            $posts = $posts->whereHas('projects', function ($q) use ($project_id) {
+                $q->whereIn('projects.id', $project_id);
+            });
+        }
+
+
+
+        return Datatables::of($posts)->addcolumn('action', function ($query) {
+            return '<a href="' . url('orphanProject2/' . $query->id) . '" id="project_count" class="btn btn-success">عرض المشاريع</a>
+
+<label class="checkbox-inline parent-check">
+                    <input type="checkbox" name="selOrphan[]" value="' . $query->id . '" class="mycheckbox">
+                    <span class="label-checkbox">اختيار</span></label>';
+        })->make(true);
+
+    }
+
+
+    public function applyOrphan(Request $request)
+    {
+
+        $selorphan = $request->get('selOrphan');
+        $proj_id = $request->get('apply_project_id');
+
+        if ((!isset($selorphan)) || $proj_id == "") {
+            return response(["status" => false, "message" => "يجب اختيار المشروع و الأيتام", 401]);
+
+        }
+
+        $max_print_id = OrphanProject::max('print_id') + 1;
+        $coupon_no = OrphanProject::where('project_id', $proj_id)->max('coupon_no');
+        // $max_print_id=+1;
+
+        $orphans = Orphan::whereIn('id', $selorphan)->orderby('state_id')->get();
+        if (isset($selorphan)) {
+            foreach ($orphans as $orphan) {
+                $obj = new OrphanProject();
+                $obj->project_id = $proj_id;
+                $obj->orphan_id = $orphan->id;
+                $obj->user_id = auth()->user()->id;
+                $obj->tag = $request->get('tag');
+                $obj->note = $request->get('note');
+                $obj->print_id = $max_print_id;
+                $obj->coupon_no = ++$coupon_no;
+                $obj->save();
+            }
+
+            return response(["status" => true, "message" => trans('ar.created_successfully')]);
+        }
+    }
+
+
+    public function delete_orphans_from_project(Request $request)
+    {
+        $proj_id = $request->project_id;
+        if ($proj_id == "") {
+            // dd(1);
+            return response(["status" => false, "message" => "يجب اختيار المشروع", 401]);
+        }
+        if ($request->get('ids'))
+            OrphanProject::where('project_id', $proj_id)->whereIn('orphan_id', $request->get('ids'))->delete();
+
+        return response(["status" => true, "message" => "تمت العملية بنجاح", 200]);
+    }
 }

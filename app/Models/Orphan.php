@@ -155,6 +155,11 @@ class Orphan extends Model
 
     function projects()
     {
+        return $this->belongsToMany(Project::class, 'orphan_projects', 'orphan_id', 'project_id')->withPivot('print_id', 'coupon_no', 'tag','note');
+    }
+
+    function orphanSponser()
+    {
         return $this->hasMany(OrphanSponser::class, 'orphan_id', 'id');
     }
 
